@@ -1,43 +1,52 @@
 
     // Create Dino Constructor
-    function Animal(species, weight, height, diet, where, when, fact){
+    function Animal(species, weight, height, diet, where, when){
         this.species = species;
         this.weight = weight;
         this.height = height;
         this.diet = diet;
         this.where = where;
         this.when = when;
+    }
+
+    // Create Dino Objects
+    function Dino(fact, image){
         this.fact = fact;
+        this.image = image;
         this.toFeet = function(){
             let feet = Math.floor(this.height/12);
             let inches = this.height % 12;
             return ;
         }
     }
+    Dino.prototype = Object.create(Animal.prototype);
+    Dino.prototype.constructor = Dino;
 
-    // Create Dino Objects
-    Animal.prototype = dinos;
-    const dinos = new Animal(){
-
-    }
-
+    // retrieve dinos from local json
+    // fetch("/Users/larryrogersjr/ColorCodedLabs/Dinos/dino.json")
+    // .then(response => response.json())
+    // .then(jsonData => console.log(jsonData));
 
     // Create Human Object
-    Animal.prototype = human
-    const human = {
-        name: 'Human'
+    function Human(name, weight, height, diet){
+        Animal.apply(this, ["Human", weight, height, diet]);
+        this.name = name;
     }
+    Human.prototype = Object.create(Animal.prototype);
+    Human.prototype.constructor = Human;
 
 
     // Use IIFE to get human data from form
     function getHuman(){
         return (function(){
-            let name = document.getElementById("name");
-            let heightFeet = hf;
-            let heightInch = hi;
-            let weight = w;
-            let diet = d;
-            return new human()
+            let name = document.getElementById("name").value;
+            let heightFeet = document.getElementById("feet").value;
+            let heightInch = document.getElementById("inches").value;
+            let weight = document.getElementById("weight").value;
+            
+            let dietDrpDwn = document.getElementById("diet");
+            let diet = dietDrpDwn.options[dietDrpDwn.selectedIndex].text;
+            return new Human(name, weight, heightFeet*12 + Number(heightInch), diet)
         })();
     }
 
@@ -62,3 +71,8 @@
 
 
 // On button click, prepare and display infographic
+document.getElementById("btn").addEventListener("click", (e) =>{
+    e.preventDefault();
+    getHuman()
+    document.getElementById("dino-compare").style.display = "none";
+});
