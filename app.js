@@ -26,7 +26,7 @@
 
     // array for fetched Dinos
     function fetchedDinosArray(dinoArray){
-        let fetchedDinos = [];
+        fetchedDinos = [];
         dinoArray.forEach(element => {
             newDino = new Dino(
                 element.species,
@@ -80,13 +80,16 @@
     
     // Compare Method: Weight
     function compareWeight(dinoWeight, humanWeight){
+        let result = '';
         if(dinoWeight > humanWeight){
             let excessWeight = dinoWeight - humanWeight;
-            return "This dinosaur weighs " + excessWeight + " pounds more than you!";
+            result = "This dinosaur weighs " + excessWeight + " pounds more than you!";
         }else{
             let underWeight = humanWeight - dinoWeight;
-            return "This dinosaur weighs " + underWeight + " pounds less than you!";
+            result =  "This dinosaur weighs " + underWeight + " pounds less than you!";
         }
+        console.log(result)
+        return result;
     }
 
     
@@ -94,13 +97,13 @@
     function compareDiet(dinoDiet, humanDiet){
         switch(dinoDiet.toLowerCase()){
             case humanDiet.toLowerCase():
-                return "You and this dinosaur have the same diet: ${dinoDiet}";
-            case "omnivore":
-                return "You and this dinosaur have different diets. This dinosaur is an ${dinoDiet}";
-            case "carnivore":
-                return "You and this dinosaur have different diets. This dinosaur is a ${dinoDiet}";
+                return `You and this dinosaur have the same diet: ${dinoDiet}`;
+            case "omnivor":
+                return `You and this dinosaur have different diets. This dinosaur is an ${dinoDiet}`;
+            case "carnivor":
+                return `You and this dinosaur have different diets. This dinosaur is a ${dinoDiet}`;
             case "herbavor":
-                return "You and this dinosaur have different diets. This dinosaur is an ${dinoDiet}";
+                return `You and this dinosaur have different diets. This dinosaur is an ${dinoDiet}`;
         }
     }
     
@@ -124,7 +127,9 @@
         dinoFacts.push(compareWeight(dino.weight, human.weight));
         dinoFacts.push(compareDiet(dino.diet, human.diet));
 
-        return dinoFacts[Math.floor(Math.random() * dinoFacts.length)];
+        randNum = Math.floor(Math.random() * dinoFacts.length);
+        console.log(randNum);
+        return dinoFacts[randNum];
     }
     // Generate Tiles for each Dino in Array
     function generateTiles(dinosuars, human){
@@ -166,6 +171,5 @@
 document.getElementById("btn").addEventListener("click", () =>{
     // hide human form view
     hideForm();
-    console.log(fetchedDinos)
-    // generateTiles(fetchedDinos, getHuman());
+    generateTiles(fetchedDinos, getHuman());
 });
