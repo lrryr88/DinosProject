@@ -10,22 +10,37 @@
     }
 
     // Create Dino Objects
-    function Dino(fact, image){
+    function Dino(species, weight, height, diet, where, when, fact){
+        Animal.apply(this, [species, weight, height, diet, where, when]);
         this.fact = fact;
-        this.image = image;
-        this.toFeet = function(){
-            let feet = Math.floor(this.height/12);
-            let inches = this.height % 12;
-            return ;
-        }
     }
     Dino.prototype = Object.create(Animal.prototype);
     Dino.prototype.constructor = Dino;
 
     // retrieve dinos from local json
-    // fetch("/Users/larryrogersjr/ColorCodedLabs/Dinos/dino.json")
-    // .then(response => response.json())
-    // .then(jsonData => console.log(jsonData));
+    fetch('dino.json')
+        .then(response => response.json())
+        .then(jsonData => {
+            fetchedDinosArray(jsonData.Dinos)
+        });
+
+    // array for fetched Dinos
+    function fetchedDinosArray(dinoArray){
+        let fetchedDinos = [];
+        dinoArray.forEach(element => {
+            newDino = new Dino(
+                element.species,
+                element.weight,
+                element.height,
+                element.diet,
+                element.where,
+                element.when,
+                element.fact
+            )
+            fetchedDinos.push(newDino);
+        });
+        return fetchedDinos;
+    }
 
     // Create Human Object
     function Human(name, weight, height, diet){
@@ -51,28 +66,106 @@
     }
 
 
-    // Create Dino Compare Method 1
-    // NOTE: Weight in JSON file is in lbs, height in inches. 
+    // Compare Method: Height
+    function compareHeight(dinoHeight, humanHeight){
+        if(dinoHeight > humanHeight){
+            let excessHeight = dinoHeight - humanHeight;
+            return "This dinosaur is " + excessHeight + " inches taller than you!";
+        }else{
+            let underHeight = humanHeight - dinoHeight;
+            return "This dinosaur is " + underHeight + " inches shorter than you!";
+        }
+    }
 
     
-    // Create Dino Compare Method 2
-    // NOTE: Weight in JSON file is in lbs, height in inches.
+    // Compare Method: Weight
+    function compareWeight(dinoWeight, humanWeight){
+        if(dinoWeight > humanWeight){
+            let excessWeight = dinoWeight - humanWeight;
+            return "This dinosaur weighs " + excessWeight + " pounds more than you!";
+        }else{
+            let underWeight = humanWeight - dinoWeight;
+            return "This dinosaur weighs " + underWeight + " pounds less than you!";
+        }
+    }
 
     
-    // Create Dino Compare Method 3
-    // NOTE: Weight in JSON file is in lbs, height in inches.
+    // Compare Method: Diet
+    function compareDiet(dinoDiet, humanDiet){
+        switch(dinoDiet.toLowerCase()){
+            case humanDiet.toLowerCase():
+                return "You and this dinosaur have the same diet: ${dinoDiet}";
+            case "omnivore":
+                return "You and this dinosaur have different diets. This dinosaur is an ${dinoDiet}";
+            case "carnivore":
+                return "You and this dinosaur have different diets. This dinosaur is a ${dinoDiet}";
+            case "herbavor":
+                return "You and this dinosaur have different diets. This dinosaur is an ${dinoDiet}";
+        }
+    }
+    
+    // create Location fact
+    function getDinoLocation(dinoLoc){
+        return "This dinosaur could be found in " + dinoLoc;
+    }
 
+    // create Period fact
+    function getDinoPeriod(dinoPeriod){
+        return "This dinosaur could be found in the " + dinoPeriod + " period.";
+    }
 
+    // get random fact
+    function getRandomFact(dino, human){
+        let dinoFacts = [];
+        dinoFacts.push(dino.fact);
+        dinoFacts.push(getDinoPeriod(dino.when));
+        dinoFacts.push(getDinoLocation(dino.where));
+        dinoFacts.push(compareHeight(dino.height, human.height));
+        dinoFacts.push(compareWeight(dino.weight, human.weight));
+        dinoFacts.push(compareDiet(dino.diet, human.diet));
+
+        return dinoFacts[Math.floor(Math.random() * dinoFacts.length)];
+    }
     // Generate Tiles for each Dino in Array
-  
-        // Add tiles to DOM
+    function generateTiles(dinosuars, human){
+        dinosuars.splice(4,0,null)
+        for(let i=0; i,9; i++){
+            let tileDiv = document.createElement('div')
+            tileDiv.className = 'grid-item'
+
+            if(i===4){
+                let tile = document.createElement("h2")
+                tile.innerHTML = `<h2>${human.name}</h2>
+                <img src="images/human.png" alt = "picture of ${human.name}"/>`
+                tileDiv.appendChild(tile)
+            }else if (dinosuars[i].species == 'Pigeon'){
+                let tile = document.createElement("h2")
+                tile.innerHTML = `<h2>${dinosuars[i].species}</h2>
+                <img src="images/${dinosuars[i].species.toLowerCase()}.png" alt = "picture of ${dinosuars[i].species}"/>
+                <h4>${dinosuars[i].fact}</h4>`
+                tileDiv.appendChild(tile)
+            }else{
+                let randomFact = getRandomFact(dinosuars[i], human)
+                let tile = document.createElement("h2")
+                tile.innerHTML = `<h2>${dinosuars[i].species}</h2>
+                <img src="images/${dinosuars[i].species.toLowerCase()}.png" alt = "picture of ${dinosuars[i].species}"/>
+                <h4>${randomFact}</h4>`
+                tileDiv.appendChild(tile)
+            }
+            document.getElementById("grid").appendChild(tileDiv)
+        }
+    }
 
     // Remove form from screen
+    function hideForm(){
+        document.getElementById("dino-compare").style.display = "none";
+    }
 
 
 // On button click, prepare and display infographic
-document.getElementById("btn").addEventListener("click", (e) =>{
-    e.preventDefault();
-    getHuman()
-    document.getElementById("dino-compare").style.display = "none";
+document.getElementById("btn").addEventListener("click", () =>{
+    // hide human form view
+    hideForm();
+    console.log(fetchedDinos)
+    // generateTiles(fetchedDinos, getHuman());
 });
